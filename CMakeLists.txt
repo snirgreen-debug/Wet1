@@ -1,6 +1,6 @@
-# cmake_minimum_required(VERSION <specify CMake version here>)
+cmake_minimum_required(VERSION 3.15)
 project(Wet1)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
-add_executable(Wet1 main.cpp ../../../../../../.CLion2019.2/config/scratches/AVLTrees.h ../../../../../../.CLion2019.2/config/scratches/AVLTrees.cpp)
+add_executable(Wet1 main.cpp AVLTreeNode.cpp AVLTreeNode.h)
