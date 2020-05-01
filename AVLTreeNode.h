@@ -26,20 +26,58 @@ private:
 //    void LR();
 //    void RL();
 public:
-    AVLTreeNode(int k, T i, AVLTreeNode *p) : key(k), info(i), left(nullptr), right(nullptr), parent(p) {}
+    AVLTreeNode(int k, T i, AVLTreeNode *p=nullptr) : key(k), info(i), left(nullptr), right(nullptr), parent(p) {}
+
+    AVLTreeNode(AVLTreeNode const &node){
+        this->key = node.key;
+        this->info = node.info;
+        this->left = node.left;
+        this->right = node.right;
+        this->parent = node.parent;
+    }
 
     ~AVLTreeNode() = default;
 
-    int getKey(){
+    int getKey() {
         return this->key;
     }
 
-    AVLTreeNode *getLeftNode(){
+    T getInfo() {
+        return this->info;
+    }
+
+    AVLTreeNode *getLeftNode() {
         return this->left;
     }
 
-    AVLTreeNode *getRightNode(){
+    AVLTreeNode *getRightNode() {
         return this->right;
+    }
+
+    AVLTreeNode *getParent(){
+        return this->parent;
+    }
+
+    AVLTreeNode* RightRot() {
+        AVLTreeNode *A = this->left, *B = this;
+        B->left = A->right;
+        A->right = B;
+
+        A->parent = B->parent;
+        B->parent = A;
+        B->left->parent = B;
+        return this->parent;
+    }
+
+    AVLTreeNode* LeftRot() {
+        AVLTreeNode *A = this->right, *B = this;
+        B->right = A->left;
+        A->left = B;
+
+        A->parent = B->parent;
+        B->parent = A;
+        B->right->parent = B;
+        return this->parent;
     }
 
     status addLeftNode(int k, T i) {
@@ -71,22 +109,22 @@ public:
         return (left - right);
     }
 
-    void preOrderIteration(void (*do_something)(AVLTreeNode*)){
-        if(!this){return;}
+    void preOrderIteration(void (*do_something)(AVLTreeNode *)) {
+        if (!this) { return; }
         do_something(this);
         this->left->preOrderIteration(do_something);
         this->right->preOrderIteration(do_something);
     }
 
-    void inOrderIteration(void (*do_something)(AVLTreeNode*)){
-        if(!this){return;}
+    void inOrderIteration(void (*do_something)(AVLTreeNode *)) {
+        if (!this) { return; }
         this->left->inOrderIteration(do_something);
         do_something(this);
         this->right->inOrderIteration(do_something);
     }
 
-    void postOrderIteration(void (*do_something)(AVLTreeNode*)){
-        if(!this){return;}
+    void postOrderIteration(void (*do_something)(AVLTreeNode *)) {
+        if (!this) { return; }
         this->left->postOrderIteration(do_something);
         this->right->postOrderIteration(do_something);
         do_something(this);
