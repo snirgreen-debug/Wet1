@@ -30,6 +30,18 @@ public:
 
     ~AVLTreeNode() = default;
 
+    int getKey(){
+        return this->key;
+    }
+
+    AVLTreeNode *getLeftNode(){
+        return this->left;
+    }
+
+    AVLTreeNode *getRightNode(){
+        return this->right;
+    }
+
     status addLeftNode(int k, T i) {
         auto *newNode = new AVLTreeNode<T>(k, i, this);
         this->left = newNode;
@@ -59,7 +71,26 @@ public:
         return (left - right);
     }
 
-//    status preOrderIteration();
+    void preOrderIteration(void (*do_something)(AVLTreeNode*)){
+        if(!this){return;}
+        do_something(this);
+        this->left->preOrderIteration(do_something);
+        this->right->preOrderIteration(do_something);
+    }
+
+    void inOrderIteration(void (*do_something)(AVLTreeNode*)){
+        if(!this){return;}
+        this->left->inOrderIteration(do_something);
+        do_something(this);
+        this->right->inOrderIteration(do_something);
+    }
+
+    void postOrderIteration(void (*do_something)(AVLTreeNode*)){
+        if(!this){return;}
+        this->left->postOrderIteration(do_something);
+        this->right->postOrderIteration(do_something);
+        do_something(this);
+    }
 
 };
 
