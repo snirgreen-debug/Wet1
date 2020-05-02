@@ -21,14 +21,10 @@ private:
     AVLTreeNode *right;
     AVLTreeNode *parent;
 
-//    void LL();
-//    void RR();
-//    void LR();
-//    void RL();
 public:
-    AVLTreeNode(int k, T i, AVLTreeNode *p=nullptr) : key(k), info(i), left(nullptr), right(nullptr), parent(p) {}
+    AVLTreeNode(int k, T i, AVLTreeNode *p = nullptr) : key(k), info(i), left(nullptr), right(nullptr), parent(p) {}
 
-    AVLTreeNode(AVLTreeNode const &node){
+    AVLTreeNode(AVLTreeNode const &node) {
         this->key = node.key;
         this->info = node.info;
         this->left = node.left;
@@ -38,6 +34,7 @@ public:
 
     ~AVLTreeNode() = default;
 
+/// Get functions
     int getKey() {
         return this->key;
     }
@@ -54,32 +51,56 @@ public:
         return this->right;
     }
 
-    AVLTreeNode *getParent(){
+    AVLTreeNode *getParent() {
         return this->parent;
     }
 
-    AVLTreeNode* RightRot() {
+/// Rotations
+    AVLTreeNode *RightRot() {
         AVLTreeNode *A = this->left, *B = this;
         B->left = A->right;
         A->right = B;
 
         A->parent = B->parent;
         B->parent = A;
-        B->left->parent = B;
+        if (B->left) {
+            B->left->parent = B;
+        }
         return this->parent;
     }
 
-    AVLTreeNode* LeftRot() {
+    AVLTreeNode *LeftRot() {
         AVLTreeNode *A = this->right, *B = this;
         B->right = A->left;
         A->left = B;
 
         A->parent = B->parent;
         B->parent = A;
-        B->right->parent = B;
+        if (B->right) {
+            B->right->parent = B;
+        }
         return this->parent;
     }
 
+    AVLTreeNode *LL() {
+        return this->RightRot();
+    }
+
+    AVLTreeNode *RR() {
+        return this->LeftRot();
+    }
+
+    AVLTreeNode *LR() {
+        this->left = this->left->LeftRot();
+        return this->RightRot();
+    }
+
+    AVLTreeNode *RL() {
+        this->right = this->right->RightRot();
+        return this->LeftRot();
+    }
+
+/// Adding Nodes
     status addLeftNode(int k, T i) {
         auto *newNode = new AVLTreeNode<T>(k, i, this);
         this->left = newNode;
@@ -91,9 +112,8 @@ public:
         this->right = newNode;
         return status::SUCCESS;
     }
-//    status deleteLeftNode(int key);
-//    status deleteRightNode(int key);
 
+/// Calculations
     int calcHeight() {
         if (!this) { return -1; }
         int h_l = this->left->calcHeight();
@@ -104,11 +124,12 @@ public:
 
     int calcBalance() {
         if (!this) { return 0; }
-        int left = this->left->calcHeight();
-        int right = this->right->calcHeight();
-        return (left - right);
+        int leftHeight = this->left->calcHeight();
+        int rightHeight = this->right->calcHeight();
+        return (leftHeight - rightHeight);
     }
 
+/// Iteration section
     void preOrderIteration(void (*do_something)(AVLTreeNode *)) {
         if (!this) { return; }
         do_something(this);
@@ -130,6 +151,27 @@ public:
         do_something(this);
     }
 
+/// Fix nodes
+
+    //todo: is there a better way to return the root?
+    AVLTreeNode *fixNodes() {
+        int rootBalance = this->calcBalance();
+        int leftBalance = this->left->calcBalance();
+        int rightBalance = this->right->calcBalance();
+
+        if (rootBalance == 2) {
+            if (leftBalance >= 0) { this->LL(); }
+            else if (leftBalance == -1) { this->LR(); }
+        } else if (rootBalance == -2) {
+            if (rightBalance == 1) { this->RL(); }
+            else if (rightBalance <= 0) { this->RR(); }
+        }
+
+        if (!this->parent) {
+            return this;
+        }
+        return this->parent->fixNodes();
+    }
 };
 
 #endif //WET1_AVLTREENODE_H
