@@ -184,7 +184,7 @@ public:
     }
 
     Node<T> *findFollowingNode_aux(Node<T> *node) {
-        if(!node->left){ return node;}
+        if (!node->left) { return node; }
         return findFollowingNode_aux(node->left);
     }
 
@@ -249,6 +249,27 @@ public:
         currentNode->height = max(getHeight(currentNode->left), getHeight(currentNode->right)) + 1;
 
         return currentNode;
+    }
+
+    void preOrderIteration(Node<T> *subRoot, void (*do_something)(Node<T> *)) {
+        if (!subRoot) { return; }
+        do_something(subRoot);
+        preOrderIteration(subRoot->left, do_something);
+        preOrderIteration(subRoot->right, do_something);
+    }
+
+    void inOrderIteration(Node<T> *subRoot, void (*do_something)(Node<T> *)) {
+        if (!subRoot) { return; }
+        inOrderIteration(subRoot->left, do_something);
+        do_something(subRoot);
+        inOrderIteration(subRoot->right, do_something);
+    }
+
+    void postOrderIteration(Node<T> *subRoot, void (*do_something)(Node<T> *)) {
+        if (!subRoot) { return; }
+        postOrderIteration(subRoot->left, do_something);
+        postOrderIteration(subRoot->right, do_something);
+        do_something(subRoot);
     }
 };
 
