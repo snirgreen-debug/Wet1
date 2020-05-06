@@ -1,36 +1,10 @@
 #include <iostream>
-#include "AVLTreeNode.h"
 #include "AVLTree.h"
+#include "LinkedList.h"
 
-typedef struct Node<int> t;
+typedef struct AVLNode<int> t;
 
-//void printKey(t *n){
-//    std::cout << n->getKey() << ", ";
-//}
-
-int main() {
-    int x = 0;
-//    auto node = new t(1, 2, nullptr);
-//    node->addLeftNode(2, 8);
-//    node->getLeftNode()->addLeftNode(3, 35);
-//    node->addRightNode(4, 76);
-//    node->getRightNode()->addRightNode(7, 56);
-//    node->getLeftNode()->addRightNode(5,2);
-//    node->getLeftNode()->getRightNode()->addLeftNode(6,2);
-
-//    node->postOrderIteration(printKey);
-
-//    node = node->LR();
-//    node = node->RightRot();
-//    node = node->RL();
-//
-//    x = node->calcHeight();
-
-////test 2 - copy ctor
-//    t node(1, 2);
-//    t node2(node);
-//    node.setKey(3);
-
+void treeTests() {
 ///test 3 - avl insertion
     auto *tree = new AVLTree<int>();
 //    t y(1, 2);
@@ -58,22 +32,14 @@ int main() {
     more_left->right = nullptr;
     more_left->parent = left;
 
-
-
-
-
 //    root = tree->LL(root);
 
-//    tree->root = tree->insertEmptyNode(nullptr, 1);
-//    tree->root = tree->insertEmptyNode(tree->root, 2);
-//    tree->root = tree->insertEmptyNode(tree->root, 3);
-
-    tree->root = tree->insertNode(tree->root, root);
+    tree->root = tree->insertPointerNode(tree->root, root);
     tree->root = tree->insertEmptyNode(tree->root, 5);
     tree->root = tree->insertEmptyNode(tree->root, 8);
-    tree->root = tree->insertNode(tree->root, left);
+    tree->root = tree->insertPointerNode(tree->root, left);
     tree->root = tree->insertEmptyNode(tree->root, 4);
-    tree->root = tree->insertNode(tree->root, more_left);
+    tree->root = tree->insertPointerNode(tree->root, more_left);
     tree->root = tree->insertEmptyNode(tree->root, 9);
 
     tree->root = tree->deleteNode(tree->root, 4);
@@ -81,9 +47,38 @@ int main() {
     tree->root = tree->deleteNode(tree->root, 2);
     tree->root = tree->deleteNode(tree->root, 1);
 
-//    Node<int> *testNode;
+//    AVLNode<int> *testNode;
 //    testNode = tree->getNodeByKey(3);
 //    testNode = tree->getNodeByKey(8);
+}
+
+void listTests(){
+
+///test 1 - constructor.
+    auto *l = new LinkedList<int>();
+
+///test 2 - insert nodes.
+    l->insertLast(1, 2);
+    l->insertFirst(2, 3);
+    l->insertFirst(3, 4);
+//    l->insertFirst(4, 5);
+//    l->insertFirst(5, 6);
+//    l->insertLast(6, 7);
+
+///test 3.1 - getNodeByIndex.
+    Node<int> *t;
+    t = l->getNodeByIndex(0);
+    t = l->getNodeByIndex(4);
+    t = l->getNodeByIndex(2);
+
+///test 3.2 - delete node.
+    l->deleteNodeByPointer(t);
+}
+
+int main() {
+    int x = 0;
+//    treeTests();
+//    listTests();
 
 
     std::cout << "node height = " << x << std::endl;

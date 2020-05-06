@@ -6,13 +6,13 @@
 #define WET1_AVLTREE_H
 
 template<typename T>
-struct Node {
+struct AVLNode {
     int key;
     int height;
     T info;
-    struct Node *left;
-    struct Node *right;
-    struct Node *parent;
+    struct AVLNode *left;
+    struct AVLNode *right;
+    struct AVLNode *parent;
 };
 
 enum status {
@@ -24,11 +24,11 @@ enum status {
 
 template<class T>
 class AVLTree {
-private:
 public:
-    Node<T> *root;
+    AVLNode<T> *root;
+    AVLNode<T> *smallestNode;
 
-    explicit AVLTree(Node<T> *node = nullptr) : root(node) {}
+    explicit AVLTree(AVLNode<T> *node = nullptr) : root(node) {}
 
     AVLTree(AVLTree<T> const &tree) {
         this->root = tree.root;
@@ -36,7 +36,7 @@ public:
 
     ~AVLTree() = default;
 
-    int calcBalance(Node<T> *node) {
+    int calcBalance(AVLNode<T> *node) {
         if (!node) return 0;
         return (getHeight(node->left) - getHeight(node->right));
     }
@@ -45,13 +45,13 @@ public:
         return (h1 >= h2 ? h1 : h2);
     }
 
-    int getHeight(Node<T> *node) {
+    int getHeight(AVLNode<T> *node) {
         if (!node) { return -1; }
         return node->height;
     }
 
-    Node<T> *LL(Node<T> *B) {
-        Node<T> *A = B->left;
+    AVLNode<T> *LL(AVLNode<T> *B) {
+        AVLNode<T> *A = B->left;
         B->left = A->right;
         A->right = B;
 
@@ -65,8 +65,8 @@ public:
         return A;
     }
 
-    Node<T> *RR(Node<T> *B) {
-        Node<T> *A = B->right;
+    AVLNode<T> *RR(AVLNode<T> *B) {
+        AVLNode<T> *A = B->right;
         B->right = A->left;
         A->left = B;
 
@@ -80,19 +80,19 @@ public:
         return A;
     }
 
-    Node<T> *LR(Node<T> *C) {
-        Node<T> *B = C->left;
+    AVLNode<T> *LR(AVLNode<T> *C) {
+        AVLNode<T> *B = C->left;
         C->left = RR(B);
         return LL(C);
     }
 
-    Node<T> *RL(Node<T> *C) {
-        Node<T> *B = C->right;
+    AVLNode<T> *RL(AVLNode<T> *C) {
+        AVLNode<T> *B = C->right;
         C->right = LL(B);
         return RR(C);
     }
 
-    Node<T> *balanceNode(Node<T> *node) {
+    AVLNode<T> *balanceNode(AVLNode<T> *node) {
         int nodeBalance = this->calcBalance(node);
         if (nodeBalance > 1) {
             int leftBalance = this->calcBalance(node->left);
@@ -113,8 +113,8 @@ public:
         return node;
     }
 
-    Node<T> *createNewNode(int key, Node<T> *parent) {
-        auto *newNode = new Node<T>;
+    AVLNode<T> *createNewNode(int key, AVLNode<T> *parent) {
+        auto *newNode = new AVLNode<T>;
         newNode->key = key;
         newNode->height = 0;
         newNode->info = 0;
@@ -123,9 +123,12 @@ public:
         newNode->parent = parent;
     }
 
-    Node<T> *insertEmptyNode(Node<T> *currentNode, int key, Node<T> *parent = nullptr) {
+    AVLNode<T> *insertEmptyNode(AVLNode<T> *currentNode, int key, AVLNode<T> *parent = nullptr) {
         if (!currentNode) {
-            Node<T> *newNode = this->createNewNode(key, parent);
+            AVLNode<T> *newNode = this->createNewNode(key, parent);
+            if(this->smallestNode->key >= key){
+                this->smallestNode = newNode;
+            }
             return newNode;
         }
         if (key < currentNode->key) {
@@ -144,8 +147,11 @@ public:
         return currentNode;
     }
 
-    Node<T> *insertNode(Node<T> *currentNode, Node<T> *newNode, Node<T> *parent = nullptr) {
+    AVLNode<T> *insertPointerNode(AVLNode<T> *currentNode, AVLNode<T> *newNode, AVLNode<T> *parent = nullptr) {
         if (!currentNode) {
+            if(this->smallestNode->key > newNode->key){
+                this->smallestNode = newNode;
+            }
             return newNode;
         }
         if (newNode->key < currentNode->key) {
@@ -164,11 +170,11 @@ public:
         return currentNode;
     }
 
-    Node<T> *getNodeByKey_aux(Node<T> *node, int key) {
+    AVLNode<T> *getNodeByKey_aux(AVLNode<T> *node, int key) {
         if (!node) { return nullptr; }
         if (node->key == key) { return node; }
-        Node<T> *leftNode = getNodeByKey_aux(node->left, key);
-        Node<T> *rightNode = getNodeByKey_aux(node->right, key);
+        AVLNode<T> *leftNode = getNodeByKey_aux(node->left, key);
+        AVLNode<T> *rightNode = getNodeByKey_aux(node->right, key);
         if (leftNode) {
             return leftNode;
         }
@@ -179,24 +185,24 @@ public:
         return nullptr;
     }
 
-    Node<T> *getNodeByKey(int key) {
+    AVLNode<T> *getNodeByKey(int key) {
         return this->getNodeByKey_aux(this->root, key);
     }
 
-    Node<T> *findFollowingNode_aux(Node<T> *node) {
+    AVLNode<T> *findFollowingNode_aux(AVLNode<T> *node) {
         if (!node->left) { return node; }
         return findFollowingNode_aux(node->left);
     }
 
-    Node<T> *findFollowingNode(Node<T> *node) {
+    AVLNode<T> *findFollowingNode(AVLNode<T> *node) {
         if (!node) { return nullptr; }
         if (!node->right) { return nullptr; }
         return findFollowingNode_aux(node->right);
     }
 
-    Node<T> *deleteNode(Node<T> *currentNode, int key, Node<T> *parent = nullptr) {
+    AVLNode<T> *deleteNode(AVLNode<T> *currentNode, int key, AVLNode<T> *parent = nullptr) {
         if (!currentNode) { return currentNode; }
-        Node<T> *retNode = nullptr;
+        AVLNode<T> *retNode = nullptr;
 
         if (key < currentNode->key) {
             currentNode->left = deleteNode(currentNode->left, key, currentNode);
@@ -223,9 +229,9 @@ public:
                 return retNode;
             }
             if (currentNode->left && currentNode->right) {
-                Node<T> *followingNode = this->findFollowingNode(currentNode);
-                Node<T> *p = followingNode->parent;
-                Node<T> *r = followingNode->right;
+                AVLNode<T> *followingNode = this->findFollowingNode(currentNode);
+                AVLNode<T> *p = followingNode->parent;
+                AVLNode<T> *r = followingNode->right;
 
                 followingNode->parent = currentNode->parent;
                 followingNode->right = currentNode->right;
@@ -251,21 +257,21 @@ public:
         return currentNode;
     }
 
-    void preOrderIteration(Node<T> *subRoot, void (*do_something)(Node<T> *)) {
+    void preOrderIteration(AVLNode<T> *subRoot, void (*do_something)(AVLNode<T> *)) {
         if (!subRoot) { return; }
         do_something(subRoot);
         preOrderIteration(subRoot->left, do_something);
         preOrderIteration(subRoot->right, do_something);
     }
 
-    void inOrderIteration(Node<T> *subRoot, void (*do_something)(Node<T> *)) {
+    void inOrderIteration(AVLNode<T> *subRoot, void (*do_something)(AVLNode<T> *)) {
         if (!subRoot) { return; }
         inOrderIteration(subRoot->left, do_something);
         do_something(subRoot);
         inOrderIteration(subRoot->right, do_something);
     }
 
-    void postOrderIteration(Node<T> *subRoot, void (*do_something)(Node<T> *)) {
+    void postOrderIteration(AVLNode<T> *subRoot, void (*do_something)(AVLNode<T> *)) {
         if (!subRoot) { return; }
         postOrderIteration(subRoot->left, do_something);
         postOrderIteration(subRoot->right, do_something);
