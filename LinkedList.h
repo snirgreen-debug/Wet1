@@ -6,22 +6,22 @@
 #define WET1_LINKEDLIST_H
 
 template<typename T>
-struct Node {
+struct LLNode {
     int key;
     T info;
-    Node *next;
-    Node *previous;
+    LLNode *next;
+    LLNode *previous;
 };
 
 template<typename T>
 class LinkedList {
 private:
-    Node<T> *head;
-    Node<T> *last;
+    LLNode<T> *head;
+    LLNode<T> *last;
 public:
     explicit LinkedList() : head(nullptr), last(nullptr) {}
 
-    explicit LinkedList(int k, T i) : head(new Node<T>()) {
+    explicit LinkedList(int k, T i) : head(new LLNode<T>()) {
         this->head->key = k;
         this->head->info = i;
         this->head->next = nullptr;
@@ -29,8 +29,8 @@ public:
         this->last = this->head;
     }
 
-    Node<T> *createNode(int key, T info) {
-        auto newNode = new Node<T>();
+    LLNode<T> *createNode(int key, T info) {
+        auto newNode = new LLNode<T>();
         newNode->key = key;
         newNode->info = info;
         newNode->next = nullptr;
@@ -39,7 +39,7 @@ public:
     }
 
     void insertLast(int key, T info) {
-        Node<T> *newNode = createNode(key, info);
+        LLNode<T> *newNode = createNode(key, info);
 
         if (this->last) { this->last->next = newNode; }
         else { this->head = newNode; }
@@ -47,16 +47,16 @@ public:
     }
 
     void insertFirst(int key, T info) {
-        Node<T> *newNode = createNode(key, info);
+        LLNode<T> *newNode = createNode(key, info);
 
         if (this->head) { this->head->previous = newNode; }
         else { this->last = newNode; }
         this->head = newNode;
     }
 
-    Node<T> *getNodeByIndex(int index) {
+    LLNode<T> *getNodeByIndex(int index) {
         if (index < 0) { return nullptr; }
-        Node<T> *iterator = this->head;
+        LLNode<T> *iterator = this->head;
         for (int i = 0; i < index; ++i) {
             if (!iterator) { return nullptr; }
             iterator = iterator->next;
@@ -64,9 +64,9 @@ public:
         return iterator;
     }
 
-    Node<T> *getNodeByKey(int key) {
+    LLNode<T> *getNodeByKey(int key) {
         if (!this->head) { return nullptr; }
-        Node<T> *iterator = this->head;
+        LLNode<T> *iterator = this->head;
         while (iterator) {
             if (iterator->key == key) { return iterator; }
             iterator = iterator->next;
@@ -75,7 +75,7 @@ public:
     }
 
     void deleteHead() {
-        Node<T> *node = this->head;
+        LLNode<T> *node = this->head;
         if (this->head == this->last) { this->last = nullptr; }
         this->head = this->head->next;
         if (this->head) { this->head->previous = nullptr; }
@@ -83,14 +83,14 @@ public:
     }
 
     void deleteLast() {
-        Node<T> *node = this->last;
+        LLNode<T> *node = this->last;
         if (this->head == this->last) { this->head = nullptr; }
         this->last = this->last->previous;
         if(this->last){this->last->next = nullptr;}
         delete node;
     }
 
-    void deleteNodeByPointer(Node<T> *node) {
+    void deleteNodeByPointer(LLNode<T> *node) {
         if (!node) { return; }
         if (node->previous && node->next) {
             node->previous->next = node->next;
