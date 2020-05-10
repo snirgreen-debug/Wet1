@@ -11,11 +11,17 @@ struct LLNode {
     T info;
     LLNode *next;
     LLNode *previous;
+
+    ~LLNode() {
+        delete info;
+        next = previous = nullptr;
+        info = nullptr;
+    }
 };
 
 template<typename T>
 class LinkedList {
-private:
+public:
     LLNode<T> *head;
     LLNode<T> *last;
 public:
@@ -38,6 +44,12 @@ public:
         return newNode;
     }
 
+    ~LinkedList(){
+        while(this->head){
+            deleteHead();
+        }
+    }
+
     void insertLast(int key, T info) {
         LLNode<T> *newNode = createNode(key, info);
 
@@ -52,6 +64,19 @@ public:
         if (this->head) { this->head->previous = newNode; }
         else { this->last = newNode; }
         this->head = newNode;
+    }
+
+    void insertAfter(LLNode<T> *node, int key, T info) {
+        if (!node) return;
+        if (node->next == nullptr) {
+            insertLast(key, info);
+            return;
+        }
+        auto newNode = createNode(key, info);
+        newNode->next = node->next;
+        newNode->next->previous = newNode;
+        newNode->previous = node;
+        node->next = newNode;
     }
 
     LLNode<T> *getNodeByIndex(int index) {
@@ -86,7 +111,7 @@ public:
         LLNode<T> *node = this->last;
         if (this->head == this->last) { this->head = nullptr; }
         this->last = this->last->previous;
-        if(this->last){this->last->next = nullptr;}
+        if (this->last) { this->last->next = nullptr; }
         delete node;
     }
 
@@ -107,11 +132,14 @@ public:
             this->last->next = nullptr;
         }
         delete node;
-
     }
 
     void deleteNodeByKey(int key) {
         deleteNodeByPointer(getNodeByKey(key));
+    }
+
+    LLNode<T> *getHead() {
+        return this->head;
     }
 };
 

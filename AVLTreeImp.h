@@ -54,6 +54,7 @@ AVLTree<T>::AVLTree(int size) {
 
 template<typename T>
 AVLNode<T> *AVLTree<T>::findSmallest(AVLNode<T> *subRoot) {
+    if (!subRoot) { return nullptr; }
     if (!subRoot->left) { return subRoot; }
     return findSmallest(subRoot->left);
 }
@@ -275,11 +276,15 @@ AVLNode<T> *AVLTree<T>::deleteNode_aux(AVLNode<T> *currentNode, int key, AVLNode
         }
         if (!currentNode->left) {
             retNode = currentNode->right;
+            retNode->parent = currentNode->parent;
+            currentNode->right = nullptr;
             delete currentNode;
             return retNode;
         }
         if (!currentNode->right) {
             retNode = currentNode->left;
+            retNode->parent = currentNode->parent;
+            currentNode->left = nullptr;
             delete currentNode;
             return retNode;
         }

@@ -14,7 +14,7 @@ public:
 
     explicit Artist(T *data) : data(data) {}
 
-    Artist(Artist<T> const&artist) : data(artist.data) {}
+    Artist(Artist<T> const &artist) : data(artist.data) {}
 
     ~Artist() = default;
 
@@ -30,21 +30,36 @@ public:
 
 template<class T>
 class Array {
-    T arr[];
+    T *arr;
+    int size;
 
 public:
-    explicit Array(int n) : arr(new T[n]) {};
+    explicit Array(int n) : arr(new T[n]), size(n) {};
 
     ~Array() {
-        delete arr;
+        delete[] arr;
     };
 
-    void setArray(T &data, int n) {
-        for (int i = 0; i < n; i++)
+    void setArray(T data) {
+        for (int i = 0; i < this->size; i++)
             this->arr[i] = data;
     };
 
-    T &operator[](int index) { return this->arr[index]; }
+    int getSize() {
+        return this->size;
+    }
+
+    T operator[](int index){
+        return this->arr[index];
+    }
+
+    T getByIndex(int index){
+        return this->arr[index];
+    }
+
+    void setByIndex(int index, T data){
+        this->arr[index] = data;
+    }
 };
 
 #endif //WET1_ARTIST_H

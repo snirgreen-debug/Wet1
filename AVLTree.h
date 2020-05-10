@@ -5,6 +5,8 @@
 #ifndef WET1_AVLTREE_H
 #define WET1_AVLTREE_H
 
+#include <iostream>
+
 template<typename T>
 class AVLNode {
 public:
@@ -80,12 +82,12 @@ public:
 
     AVLNode<T> *deleteNode(AVLNode<T> *currentNode, int key, AVLNode<T> *parent = nullptr);
 
-        AVLNode<T> *getNodeByKey(AVLNode<T> *currentNode, int key);
+    AVLNode<T> *getNodeByKey(AVLNode<T> *currentNode, int key);
 
-    void printInOrder(AVLNode<T> *node){
-        if(!node){return;}
+    void printInOrder(AVLNode<T> *node) {
+        if (!node) { return; }
         printInOrder(node->left);
-        std::cout<< node->key <<", ";
+        std::cout << node->key << ", ";
         printInOrder(node->right);
     }
 };
